@@ -2,6 +2,7 @@ package main
 
 import (
 	"goku.net/framework/commons"
+	"goku.net/framework/database"
 	"goku.net/framework/network/http"
 	"goku.net/services/user"
 )
@@ -9,9 +10,12 @@ import (
 func main() {
 
 	commons.InitLogger()
+
+	database.Init(configs []*config.Mysql)
+
 	server := http.NewServer(8989)
 
-	server.AddModule("user", &user.UserFactory{})
+	server.AddModule(user.NewExecutorFactory())
 
 	server.Start()
 }

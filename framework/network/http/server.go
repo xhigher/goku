@@ -24,8 +24,8 @@ func NewServer(port int) HttpServer {
 	}
 }
 
-func (server HttpServer) AddModule(module string, executorFactory ModuleExecutorFactory) {
-	server.executorFactories[module] = executorFactory
+func (server HttpServer) AddModule(executorFactory ModuleExecutorFactory) {
+	server.executorFactories[executorFactory.ModuleName()] = executorFactory
 }
 
 func (server HttpServer) Start() {

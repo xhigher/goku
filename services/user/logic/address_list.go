@@ -1,4 +1,4 @@
-package user
+package logic
 
 import (
 	"goku.net/framework/network/http"

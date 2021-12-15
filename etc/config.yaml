@@ -1,0 +1,24 @@
+zap:
+  level: info
+  format: console
+  prefix: '[goku]'
+  director: log
+  showLine: true
+  encode-level: LowercaseColorLevelEncoder
+  stacktrace-key: stacktrace
+  log-in-console: true
+mysql:
+  ip-port: 127.0.0.1:3306
+  db-name: goku_user
+  use: root
+  password: 123456
+  extras: charset=utf8mb4&parseTime=True&loc=Local
+  max-idle-conns: 0
+  max-open-conns: 0
+  log-mode: ""
+  log-zap: false
+redis:
+  db: 0
+  addr: 127.0.0.1:6379
+  password: ""
+

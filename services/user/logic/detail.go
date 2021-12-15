@@ -1,7 +1,8 @@
-package user
+package logic
 
 import (
 	"goku.net/framework/network/http"
+	"goku.net/services/user/model"
 )
 
 type UserDetailParam struct {
@@ -30,7 +31,11 @@ func (executor *UserDetail) Execute() http.ResponseData {
 func (executor *UserDetail) executeV1() http.ResponseData {
 	param := executor.BodyData.(*UserDetailParam)
 	param.Mid = 123456
-	return executor.ResultOKData(param)
+
+	detailModel := &model.UserDetailModel{}
+	data := detailModel.GetDetail(param.Mid)
+
+	return executor.ResultOKData(data)
 }
 
 func (executor *UserDetail) executeV2() http.ResponseData {

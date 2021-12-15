@@ -93,6 +93,7 @@ func (executor *BaseExecutor) OutputResult(code ErrorCode, msg string, data inte
 }
 
 type ModuleExecutorFactory interface {
+	ModuleName() string
 	Create(version int, action string) Executor
 }
 

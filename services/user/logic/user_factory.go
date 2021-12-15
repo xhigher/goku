@@ -1,8 +1,12 @@
-package user
+package logic
 
 import "goku.net/framework/network/http"
 
 type UserFactory struct {
+}
+
+func (factory *UserFactory) ModuleName() string {
+	return "user"
 }
 
 func (factory *UserFactory) Create(version int, action string) http.Executor {
