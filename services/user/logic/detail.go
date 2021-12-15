@@ -30,10 +30,8 @@ func (executor *UserDetail) Execute() http.ResponseData {
 
 func (executor *UserDetail) executeV1() http.ResponseData {
 	param := executor.BodyData.(*UserDetailParam)
-	param.Mid = 123456
 
-	detailModel := &model.UserDetailModel{}
-	data := detailModel.GetDetail(param.Mid)
+	data := model.GetUserDetail(param.Mid)
 
 	return executor.ResultOKData(data)
 }

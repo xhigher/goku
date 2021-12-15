@@ -4,12 +4,7 @@ import (
 	proto "goku.net/protos/model"
 )
 
-type UserDetailModel struct {
-	*UserModel
-	*proto.UserDetailTable
-}
-
-func (model *UserDetailModel) GetDetail(mid int64) (data proto.UserDetailTable) {
-	model.Go().First(&data, mid)
+func GetUserDetail(mid int64) (data proto.UserDetailModel) {
+	MyDB().First(&data, mid)
 	return
 }

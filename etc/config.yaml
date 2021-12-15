@@ -10,8 +10,8 @@ zap:
 mysql:
   - ip-port: 127.0.0.1:3306
     db-name: goku_user
-    use: root
-    password: 123456
+    user: root
+    password: xh@123456
     extras: charset=utf8mb4&parseTime=True&loc=Local
     max-idle-conns: 0
     max-open-conns: 0

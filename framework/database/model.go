@@ -1,27 +1,16 @@
 package database
 
 import (
+	"go.uber.org/zap"
+	"goku.net/framework/commons"
 	"gorm.io/gorm"
 )
 
-type Model interface {
-	DatabaseName() string
-	TableName() string
-}
-
 type BaseModel struct {
-	db *gorm.DB
+	DBName string
 }
 
-func (model *BaseModel) DatabaseName() string {
-	return ""
-}
-
-func (model *BaseModel) Go() *gorm.DB {
-	db := GetDB(model.DatabaseName())
-	if db != nil {
-		model.db = db
-		return model.db.Model(model)
-	}
-	return nil
+func (model *BaseModel) GormDB() *gorm.DB {
+	commons.Logger().Info("BaseModel.GormDB()", zap.String("dbName", model.DBName))
+	return GetDB(model.DBName)
 }
