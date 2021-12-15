@@ -21,6 +21,7 @@ type Executor interface {
 type BaseExecutor struct {
 	QueryValues map[string]string
 	BodyData    interface{}
+	Version     int
 }
 
 func (executor *BaseExecutor) SupportMethods() []string {
@@ -61,6 +62,10 @@ func (executor *BaseExecutor) ResultError() ResponseData {
 
 func (executor *BaseExecutor) ResultErrorInternal() ResponseData {
 	return executor.OutputResult(ERR_INTERNAL, "ERR_INTERNAL", nil)
+}
+
+func (executor *BaseExecutor) ResultErrorRequest() ResponseData {
+	return executor.OutputResult(ERR_REQUEST, "ERR_REQUEST", nil)
 }
 
 func (executor *BaseExecutor) ResultErrorParameter(msg string) ResponseData {

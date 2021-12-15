@@ -1,10 +1,7 @@
 package user
 
 import (
-	"log"
-
 	"goku.net/framework/network/http"
-	"goku.net/utils"
 )
 
 type UserDetailParam struct {
@@ -21,7 +18,23 @@ func (executor *UserDetail) SupportMethods() []string {
 }
 
 func (executor *UserDetail) Execute() http.ResponseData {
-	result, _ := utils.ToJSONString(executor.BodyData)
-	log.Println("UserDetail", result)
-	return executor.ResultOKData(executor.BodyData)
+	switch executor.Version {
+	case 1:
+		return executor.executeV1()
+	case 2:
+		return executor.executeV2()
+	}
+	return executor.ResultErrorRequest()
+}
+
+func (executor *UserDetail) executeV1() http.ResponseData {
+	param := executor.BodyData.(*UserDetailParam)
+	param.Mid = 123456
+	return executor.ResultOKData(param)
+}
+
+func (executor *UserDetail) executeV2() http.ResponseData {
+	param := executor.BodyData.(*UserDetailParam)
+	param.Mid = 654321
+	return executor.ResultOKData(param)
 }

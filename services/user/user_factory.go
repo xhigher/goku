@@ -10,8 +10,18 @@ func (factory *UserFactory) Create(version int, action string) http.Executor {
 	case "detail":
 		return &UserDetail{&http.BaseExecutor{
 			BodyData: &UserDetailParam{},
+			Version:  version,
 		}}
-
+	case "address_list":
+		return &UserAddressList{&http.BaseExecutor{
+			BodyData: &UserAddressListParam{},
+			Version:  version,
+		}}
+	case "address_update":
+		return &UserAddressUpdate{&http.BaseExecutor{
+			BodyData: &UserAddressUpdateParam{},
+			Version:  version,
+		}}
 	default:
 		return nil
 	}
