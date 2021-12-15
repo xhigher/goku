@@ -2,13 +2,14 @@ package main
 
 import (
 	"flag"
+	"io/ioutil"
+
 	"goku.net/framework/commons"
 	"goku.net/framework/config"
 	"goku.net/framework/database"
 	"goku.net/framework/network/http"
 	"goku.net/services/user"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 )
 
 var (

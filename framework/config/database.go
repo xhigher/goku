@@ -1,6 +1,6 @@
 package config
 
-type Mysql struct {
+type MysqlConfig struct {
 	IpPort       string `mapstructure:"ip-port" json:"ip-port" yaml:"ip-port"`
 	DbName       string `mapstructure:"db-name" json:"db-name" yaml:"db-name"`
 	Extras       string `mapstructure:"extras" json:"extras" yaml:"extras"`                         // 数据库名
@@ -12,6 +12,6 @@ type Mysql struct {
 	LogZap       bool   `mapstructure:"log-zap" json:"log-zap" yaml:"log-zap"`                      // 是否通过zap写入日志文件
 }
 
-func (m *Mysql) Dsn() string {
+func (m *MysqlConfig) Dsn() string {
 	return m.User + ":" + m.Password + "@tcp(" + m.IpPort + ")/" + m.DbName + "?" + m.Extras
 }

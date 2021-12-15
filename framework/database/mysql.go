@@ -14,7 +14,7 @@ var (
 	mysqlDBs map[string]*gorm.DB
 )
 
-func Init(configs []*config.Mysql) {
+func Init(configs []*config.MysqlConfig) {
 	mysqlDBs = make(map[string]*gorm.DB)
 	for _, config := range configs {
 		gormConfig := mysql.Config{

@@ -1,9 +1,9 @@
 package config
 
 type ServerConfig struct {
-	Zap   ZapConfig   `yaml:"zap"`
-	Mysql []*Mysql    `yaml:"mysql"`
-	Redis RedisConfig `yaml:"redis"`
+	Zap   ZapConfig      `yaml:"zap"`
+	Mysql []*MysqlConfig `yaml:"mysql"`
+	Redis RedisConfig    `yaml:"redis"`
 }
 
 type ZapConfig struct {
