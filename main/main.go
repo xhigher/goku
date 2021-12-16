@@ -4,6 +4,7 @@ import (
 	"flag"
 	"io/ioutil"
 
+	"goku.net/framework/cache"
 	"goku.net/framework/commons"
 	"goku.net/framework/config"
 	"goku.net/framework/database"
@@ -28,15 +29,17 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	c := config.ServerConfig{}
-	err = yaml.Unmarshal(configFileContent, &c)
+	config := config.ServerConfig{}
+	err = yaml.Unmarshal(configFileContent, &config)
 	if err != nil {
 		panic(err)
 	}
 
 	commons.InitLogger()
 
-	database.Init(c.Mysql)
+	database.Init(config.Mysql)
+
+	cache.Init(config.Redis)
 
 	server := http.NewServer(8989)
 
