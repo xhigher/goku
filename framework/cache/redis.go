@@ -244,6 +244,353 @@ func (cache *RedisCache) HSetNX(ctx context.Context, key, field string, value in
 	return
 }
 
+func (cache *RedisCache) BLPop(ctx context.Context, timeout time.Duration, keys ...string) (result *RedisResult) {
+	result.val, result.err = cache.client.BLPop(cache.Ctx, timeout, keys...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.BLPop",
+			zap.Duration("timeout", timeout),
+			zap.Strings("keys", keys),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) BRPop(ctx context.Context, timeout time.Duration, keys ...string) (result *RedisResult) {
+	result.val, result.err = cache.client.BRPop(cache.Ctx, timeout, keys...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.BRPop",
+			zap.Duration("timeout", timeout),
+			zap.Strings("keys", keys),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) BRPopLPush(ctx context.Context, source, destination string, timeout time.Duration) (result *RedisResult) {
+	result.val, result.err = cache.client.BRPopLPush(cache.Ctx, source, destination, timeout).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.BRPopLPush",
+			zap.Duration("timeout", timeout),
+			zap.String("source", source),
+			zap.String("destination", destination),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LInsert(ctx context.Context, key, op string, pivot, value interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.LInsert(cache.Ctx, key, op, pivot, value).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LInsert",
+			zap.String("key", key),
+			zap.String("op", op),
+			zap.Any("pivot", pivot),
+			zap.Any("value", value),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LLen(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.LLen(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.BRPopLPush",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LPop(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.LPop(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LPop",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LPush(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.LPush(cache.Ctx, key, values...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LPush",
+			zap.String("key", key),
+			zap.Any("values", values),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LPushX(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.LPushX(cache.Ctx, key, values...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LPushX",
+			zap.String("key", key),
+			zap.Any("values", values),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LRange(ctx context.Context, key string, start, stop int64) (result *RedisResult) {
+	result.val, result.err = cache.client.LRange(cache.Ctx, key, start, stop).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LRange",
+			zap.String("key", key),
+			zap.Int64("start", start),
+			zap.Int64("stop", stop),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LRem(ctx context.Context, key string, count int64, value interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.LRem(cache.Ctx, key, count, value).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LRem",
+			zap.String("key", key),
+			zap.Int64("count", count),
+			zap.Any("value", value),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LSet(ctx context.Context, key string, index int64, value interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.LSet(cache.Ctx, key, index, value).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LSet",
+			zap.String("key", key),
+			zap.Int64("index", index),
+			zap.Any("value", value),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) LTrim(ctx context.Context, key string, start, stop int64) (result *RedisResult) {
+	result.val, result.err = cache.client.LTrim(cache.Ctx, key, start, stop).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.LTrim",
+			zap.String("key", key),
+			zap.Int64("start", start),
+			zap.Int64("stop", stop),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) RPop(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.RPop(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.RPop",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) RPopLPush(ctx context.Context, source, destination string) (result *RedisResult) {
+	result.val, result.err = cache.client.RPopLPush(cache.Ctx, source, destination).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.RPopLPush",
+			zap.String("source", source),
+			zap.String("destination", destination),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) RPush(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.RPush(cache.Ctx, key, values...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.RPush",
+			zap.String("key", key),
+			zap.Any("values", values),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SAdd(ctx context.Context, key string, members ...interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.SAdd(cache.Ctx, key, members...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SAdd",
+			zap.String("key", key),
+			zap.Any("members", members),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SCard(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.SCard(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SCard",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SDiff(ctx context.Context, keys ...string) (result *RedisResult) {
+	result.val, result.err = cache.client.SDiff(cache.Ctx, keys...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SDiff",
+			zap.Any("keys", keys),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SIsMember(ctx context.Context, key string, member interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.SIsMember(cache.Ctx, key, member).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SIsMember",
+			zap.String("key", key),
+			zap.Any("member", member),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SMIsMember(ctx context.Context, key string, members ...interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.SMIsMember(cache.Ctx, key, members...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SIsMember",
+			zap.String("key", key),
+			zap.Any("members", members),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SMembers(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.SMembers(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SMembers",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SMembersMap(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.SMembersMap(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SMembersMap",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SMove(ctx context.Context, source, destination string, member interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.SMove(cache.Ctx, source, destination, member).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SMove",
+			zap.String("source", source),
+			zap.String("destination", destination),
+			zap.Any("member", member),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SPop(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.SPop(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SPop",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SPopN(ctx context.Context, key string, count int64) (result *RedisResult) {
+	result.val, result.err = cache.client.SPopN(cache.Ctx, key, count).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SPopN",
+			zap.String("key", key),
+			zap.Int64("count", count),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SRandMember(ctx context.Context, key string) (result *RedisResult) {
+	result.val, result.err = cache.client.SRandMember(cache.Ctx, key).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SRandMember",
+			zap.String("key", key),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+// SRandMemberN Redis `SRANDMEMBER key count` command.
+func (cache *RedisCache) SRandMemberN(ctx context.Context, key string, count int64) (result *RedisResult) {
+	result.val, result.err = cache.client.SRandMemberN(cache.Ctx, key, count).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SRandMemberN",
+			zap.String("key", key),
+			zap.Int64("count", count),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SRem(ctx context.Context, key string, members ...interface{}) (result *RedisResult) {
+	result.val, result.err = cache.client.SRem(cache.Ctx, key, members...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SRem",
+			zap.String("key", key),
+			zap.Any("members", members),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
+func (cache *RedisCache) SUnion(ctx context.Context, keys ...string) (result *RedisResult) {
+	result.val, result.err = cache.client.SUnion(cache.Ctx, keys...).Result()
+	if result.err != nil {
+		commons.Logger().Error("RedisCache.SUnion",
+			zap.Any("keys", keys),
+			zap.Any("err", result.err))
+		return
+	}
+	return
+}
+
 func (cache *RedisCache) Do(args ...interface{}) (result *RedisResult) {
 	result.val, result.err = cache.client.Do(cache.Ctx, args...).Result()
 	if result.err != nil {
