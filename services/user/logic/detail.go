@@ -2,6 +2,7 @@ package logic
 
 import (
 	"goku.net/framework/network/http"
+	"goku.net/services/user/cache"
 	"goku.net/services/user/model"
 )
 
@@ -31,7 +32,12 @@ func (executor *UserDetail) Execute() http.ResponseData {
 func (executor *UserDetail) executeV1() http.ResponseData {
 	param := executor.BodyData.(*UserDetailParam)
 
-	data := model.GetUserDetail(param.Mid)
+	data, err := cache.GetUserDetail(param.Mid)
+	if err != nil {
+		return executor.ResultErrorInternal()
+	}
+
+	data = model.GetUserDetail(param.Mid)
 
 	return executor.ResultOKData(data)
 }

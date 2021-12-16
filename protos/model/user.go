@@ -1,4 +1,4 @@
-package proto
+package model
 
 type UserDetailModel struct {
 	Mid    int64  `json:"mid" gorm:"column:mid;type:bigint(20);not null;default:0"`

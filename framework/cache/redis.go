@@ -85,6 +85,8 @@ func (cache *RedisCache) Get(key string) (result *RedisResult) {
 			zap.String("key", key),
 			zap.Any("err", result.err))
 		return
+	} else {
+		result.exist = true
 	}
 	return
 }

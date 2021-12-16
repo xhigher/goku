@@ -1,12 +1,19 @@
 package cache
 
+import "goku.net/utils"
+
 type RedisResult struct {
-	err error
-	val interface{}
+	err   error
+	exist bool
+	val   interface{}
 }
 
 func (result *RedisResult) OK() bool {
 	return result.err == nil
+}
+
+func (result *RedisResult) Exist() bool {
+	return result.exist
 }
 
 func (result *RedisResult) Error() error {
@@ -35,4 +42,8 @@ func (result *RedisResult) StringArrayVal() []string {
 
 func (result *RedisResult) StringMapVal() map[string]string {
 	return result.val.(map[string]string)
+}
+
+func (result *RedisResult) String2Struct(data interface{}) error {
+	return utils.ParseStruct(result.StringVal(), data)
 }
