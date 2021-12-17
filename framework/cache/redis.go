@@ -31,11 +31,13 @@ func Init(configs []*config.RedisConfig) {
 			Password: config.Password,
 			DB:       config.Db,
 		})
+
 		if client != nil {
 			redisClients[config.Name] = &RedisCache{
 				Ctx:    context.Background(),
 				client: client,
 			}
+			commons.Logger().Error("Redis连接成功", zap.Any("name", config.Name), zap.Any("addr", config.Addr))
 		} else {
 			commons.Logger().Error("Redis连接异常", zap.Any("config", config))
 			os.Exit(-1)
