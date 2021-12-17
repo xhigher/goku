@@ -64,7 +64,7 @@ func (cache *RedisCache) GetClient() *redis.Client {
 	return cache.client
 }
 
-func (cache *RedisCache) Set(key string, data interface{}, et CacheExpireTime) (result *RedisResult) {
+func (cache *RedisCache) Set(key string, data interface{}, et CacheExpireTime) (result RedisResult) {
 	result.err = cache.client.Set(cache.Ctx, key, data, time.Duration(et)).Err()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.Set",
@@ -76,12 +76,13 @@ func (cache *RedisCache) Set(key string, data interface{}, et CacheExpireTime) (
 	return
 }
 
-func (cache *RedisCache) Get(key string) (result *RedisResult) {
+func (cache *RedisCache) Get(key string) (result RedisResult) {
 	result.val, result.err = cache.client.Get(cache.Ctx, key).Result()
 	if result.err == redis.Nil {
 		commons.Logger().Warn("RedisCache.Get",
 			zap.String("key", key),
 			zap.String("err", "key does not exist"))
+		result.err = nil
 	} else if result.err != nil {
 		commons.Logger().Error("RedisCache.Get",
 			zap.String("key", key),
@@ -93,7 +94,7 @@ func (cache *RedisCache) Get(key string) (result *RedisResult) {
 	return
 }
 
-func (cache *RedisCache) SetNX(key string, data interface{}, et CacheExpireTime) (result *RedisResult) {
+func (cache *RedisCache) SetNX(key string, data interface{}, et CacheExpireTime) (result RedisResult) {
 	result.val, result.err = cache.client.SetNX(cache.Ctx, key, data, time.Duration(et)).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SetNX",
@@ -104,7 +105,7 @@ func (cache *RedisCache) SetNX(key string, data interface{}, et CacheExpireTime)
 	return
 }
 
-func (cache *RedisCache) HDel(ctx context.Context, key string, fields ...string) (result *RedisResult) {
+func (cache *RedisCache) HDel(ctx context.Context, key string, fields ...string) (result RedisResult) {
 	result.val, result.err = cache.client.HDel(cache.Ctx, key, fields...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HDel",
@@ -116,7 +117,7 @@ func (cache *RedisCache) HDel(ctx context.Context, key string, fields ...string)
 	return
 }
 
-func (cache *RedisCache) HExists(ctx context.Context, key, field string) (result *RedisResult) {
+func (cache *RedisCache) HExists(ctx context.Context, key, field string) (result RedisResult) {
 	result.val, result.err = cache.client.HExists(cache.Ctx, key, field).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HExists",
@@ -128,7 +129,7 @@ func (cache *RedisCache) HExists(ctx context.Context, key, field string) (result
 	return
 }
 
-func (cache *RedisCache) HGet(ctx context.Context, key, field string) (result *RedisResult) {
+func (cache *RedisCache) HGet(ctx context.Context, key, field string) (result RedisResult) {
 	result.val, result.err = cache.client.HGet(cache.Ctx, key, field).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HGet",
@@ -140,7 +141,7 @@ func (cache *RedisCache) HGet(ctx context.Context, key, field string) (result *R
 	return
 }
 
-func (cache *RedisCache) HGetAll(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) HGetAll(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.HGetAll(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HGetAll",
@@ -151,7 +152,7 @@ func (cache *RedisCache) HGetAll(ctx context.Context, key string) (result *Redis
 	return
 }
 
-func (cache *RedisCache) HIncrBy(ctx context.Context, key, field string, incr int64) (result *RedisResult) {
+func (cache *RedisCache) HIncrBy(ctx context.Context, key, field string, incr int64) (result RedisResult) {
 	result.val, result.err = cache.client.HIncrBy(cache.Ctx, key, field, incr).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HIncrBy",
@@ -164,7 +165,7 @@ func (cache *RedisCache) HIncrBy(ctx context.Context, key, field string, incr in
 	return
 }
 
-func (cache *RedisCache) HIncrByFloat(ctx context.Context, key, field string, incr float64) (result *RedisResult) {
+func (cache *RedisCache) HIncrByFloat(ctx context.Context, key, field string, incr float64) (result RedisResult) {
 	result.val, result.err = cache.client.HIncrByFloat(cache.Ctx, key, field, incr).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HIncrByFloat",
@@ -177,7 +178,7 @@ func (cache *RedisCache) HIncrByFloat(ctx context.Context, key, field string, in
 	return
 }
 
-func (cache *RedisCache) HKeys(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) HKeys(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.HKeys(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HKeys",
@@ -188,7 +189,7 @@ func (cache *RedisCache) HKeys(ctx context.Context, key string) (result *RedisRe
 	return
 }
 
-func (cache *RedisCache) HLen(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) HLen(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.HLen(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HLen",
@@ -199,7 +200,7 @@ func (cache *RedisCache) HLen(ctx context.Context, key string) (result *RedisRes
 	return
 }
 
-func (cache *RedisCache) HMGet(ctx context.Context, key string, fields ...string) (result *RedisResult) {
+func (cache *RedisCache) HMGet(ctx context.Context, key string, fields ...string) (result RedisResult) {
 	result.val, result.err = cache.client.HMGet(cache.Ctx, key, fields...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HMGet",
@@ -211,7 +212,7 @@ func (cache *RedisCache) HMGet(ctx context.Context, key string, fields ...string
 	return
 }
 
-func (cache *RedisCache) HSet(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) HSet(ctx context.Context, key string, values ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.HSet(cache.Ctx, key, values...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HSet",
@@ -223,7 +224,7 @@ func (cache *RedisCache) HSet(ctx context.Context, key string, values ...interfa
 	return
 }
 
-func (cache *RedisCache) HMSet(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) HMSet(ctx context.Context, key string, values ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.HMSet(cache.Ctx, key, values...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HMSet",
@@ -235,7 +236,7 @@ func (cache *RedisCache) HMSet(ctx context.Context, key string, values ...interf
 	return
 }
 
-func (cache *RedisCache) HSetNX(ctx context.Context, key, field string, value interface{}) (result *RedisResult) {
+func (cache *RedisCache) HSetNX(ctx context.Context, key, field string, value interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.HSetNX(cache.Ctx, key, field, value).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.HSetNX",
@@ -248,7 +249,7 @@ func (cache *RedisCache) HSetNX(ctx context.Context, key, field string, value in
 	return
 }
 
-func (cache *RedisCache) BLPop(ctx context.Context, timeout time.Duration, keys ...string) (result *RedisResult) {
+func (cache *RedisCache) BLPop(ctx context.Context, timeout time.Duration, keys ...string) (result RedisResult) {
 	result.val, result.err = cache.client.BLPop(cache.Ctx, timeout, keys...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.BLPop",
@@ -260,7 +261,7 @@ func (cache *RedisCache) BLPop(ctx context.Context, timeout time.Duration, keys 
 	return
 }
 
-func (cache *RedisCache) BRPop(ctx context.Context, timeout time.Duration, keys ...string) (result *RedisResult) {
+func (cache *RedisCache) BRPop(ctx context.Context, timeout time.Duration, keys ...string) (result RedisResult) {
 	result.val, result.err = cache.client.BRPop(cache.Ctx, timeout, keys...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.BRPop",
@@ -272,7 +273,7 @@ func (cache *RedisCache) BRPop(ctx context.Context, timeout time.Duration, keys 
 	return
 }
 
-func (cache *RedisCache) BRPopLPush(ctx context.Context, source, destination string, timeout time.Duration) (result *RedisResult) {
+func (cache *RedisCache) BRPopLPush(ctx context.Context, source, destination string, timeout time.Duration) (result RedisResult) {
 	result.val, result.err = cache.client.BRPopLPush(cache.Ctx, source, destination, timeout).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.BRPopLPush",
@@ -285,7 +286,7 @@ func (cache *RedisCache) BRPopLPush(ctx context.Context, source, destination str
 	return
 }
 
-func (cache *RedisCache) LInsert(ctx context.Context, key, op string, pivot, value interface{}) (result *RedisResult) {
+func (cache *RedisCache) LInsert(ctx context.Context, key, op string, pivot, value interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.LInsert(cache.Ctx, key, op, pivot, value).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LInsert",
@@ -299,7 +300,7 @@ func (cache *RedisCache) LInsert(ctx context.Context, key, op string, pivot, val
 	return
 }
 
-func (cache *RedisCache) LLen(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) LLen(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.LLen(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.BRPopLPush",
@@ -310,7 +311,7 @@ func (cache *RedisCache) LLen(ctx context.Context, key string) (result *RedisRes
 	return
 }
 
-func (cache *RedisCache) LPop(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) LPop(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.LPop(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LPop",
@@ -321,7 +322,7 @@ func (cache *RedisCache) LPop(ctx context.Context, key string) (result *RedisRes
 	return
 }
 
-func (cache *RedisCache) LPush(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) LPush(ctx context.Context, key string, values ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.LPush(cache.Ctx, key, values...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LPush",
@@ -333,7 +334,7 @@ func (cache *RedisCache) LPush(ctx context.Context, key string, values ...interf
 	return
 }
 
-func (cache *RedisCache) LPushX(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) LPushX(ctx context.Context, key string, values ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.LPushX(cache.Ctx, key, values...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LPushX",
@@ -345,7 +346,7 @@ func (cache *RedisCache) LPushX(ctx context.Context, key string, values ...inter
 	return
 }
 
-func (cache *RedisCache) LRange(ctx context.Context, key string, start, stop int64) (result *RedisResult) {
+func (cache *RedisCache) LRange(ctx context.Context, key string, start, stop int64) (result RedisResult) {
 	result.val, result.err = cache.client.LRange(cache.Ctx, key, start, stop).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LRange",
@@ -358,7 +359,7 @@ func (cache *RedisCache) LRange(ctx context.Context, key string, start, stop int
 	return
 }
 
-func (cache *RedisCache) LRem(ctx context.Context, key string, count int64, value interface{}) (result *RedisResult) {
+func (cache *RedisCache) LRem(ctx context.Context, key string, count int64, value interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.LRem(cache.Ctx, key, count, value).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LRem",
@@ -371,7 +372,7 @@ func (cache *RedisCache) LRem(ctx context.Context, key string, count int64, valu
 	return
 }
 
-func (cache *RedisCache) LSet(ctx context.Context, key string, index int64, value interface{}) (result *RedisResult) {
+func (cache *RedisCache) LSet(ctx context.Context, key string, index int64, value interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.LSet(cache.Ctx, key, index, value).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LSet",
@@ -384,7 +385,7 @@ func (cache *RedisCache) LSet(ctx context.Context, key string, index int64, valu
 	return
 }
 
-func (cache *RedisCache) LTrim(ctx context.Context, key string, start, stop int64) (result *RedisResult) {
+func (cache *RedisCache) LTrim(ctx context.Context, key string, start, stop int64) (result RedisResult) {
 	result.val, result.err = cache.client.LTrim(cache.Ctx, key, start, stop).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.LTrim",
@@ -397,7 +398,7 @@ func (cache *RedisCache) LTrim(ctx context.Context, key string, start, stop int6
 	return
 }
 
-func (cache *RedisCache) RPop(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) RPop(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.RPop(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.RPop",
@@ -408,7 +409,7 @@ func (cache *RedisCache) RPop(ctx context.Context, key string) (result *RedisRes
 	return
 }
 
-func (cache *RedisCache) RPopLPush(ctx context.Context, source, destination string) (result *RedisResult) {
+func (cache *RedisCache) RPopLPush(ctx context.Context, source, destination string) (result RedisResult) {
 	result.val, result.err = cache.client.RPopLPush(cache.Ctx, source, destination).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.RPopLPush",
@@ -420,7 +421,7 @@ func (cache *RedisCache) RPopLPush(ctx context.Context, source, destination stri
 	return
 }
 
-func (cache *RedisCache) RPush(ctx context.Context, key string, values ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) RPush(ctx context.Context, key string, values ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.RPush(cache.Ctx, key, values...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.RPush",
@@ -432,7 +433,7 @@ func (cache *RedisCache) RPush(ctx context.Context, key string, values ...interf
 	return
 }
 
-func (cache *RedisCache) SAdd(ctx context.Context, key string, members ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) SAdd(ctx context.Context, key string, members ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.SAdd(cache.Ctx, key, members...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SAdd",
@@ -444,7 +445,7 @@ func (cache *RedisCache) SAdd(ctx context.Context, key string, members ...interf
 	return
 }
 
-func (cache *RedisCache) SCard(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) SCard(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.SCard(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SCard",
@@ -455,7 +456,7 @@ func (cache *RedisCache) SCard(ctx context.Context, key string) (result *RedisRe
 	return
 }
 
-func (cache *RedisCache) SDiff(ctx context.Context, keys ...string) (result *RedisResult) {
+func (cache *RedisCache) SDiff(ctx context.Context, keys ...string) (result RedisResult) {
 	result.val, result.err = cache.client.SDiff(cache.Ctx, keys...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SDiff",
@@ -466,7 +467,7 @@ func (cache *RedisCache) SDiff(ctx context.Context, keys ...string) (result *Red
 	return
 }
 
-func (cache *RedisCache) SIsMember(ctx context.Context, key string, member interface{}) (result *RedisResult) {
+func (cache *RedisCache) SIsMember(ctx context.Context, key string, member interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.SIsMember(cache.Ctx, key, member).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SIsMember",
@@ -478,7 +479,7 @@ func (cache *RedisCache) SIsMember(ctx context.Context, key string, member inter
 	return
 }
 
-func (cache *RedisCache) SMIsMember(ctx context.Context, key string, members ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) SMIsMember(ctx context.Context, key string, members ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.SMIsMember(cache.Ctx, key, members...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SIsMember",
@@ -490,7 +491,7 @@ func (cache *RedisCache) SMIsMember(ctx context.Context, key string, members ...
 	return
 }
 
-func (cache *RedisCache) SMembers(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) SMembers(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.SMembers(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SMembers",
@@ -501,7 +502,7 @@ func (cache *RedisCache) SMembers(ctx context.Context, key string) (result *Redi
 	return
 }
 
-func (cache *RedisCache) SMembersMap(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) SMembersMap(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.SMembersMap(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SMembersMap",
@@ -512,7 +513,7 @@ func (cache *RedisCache) SMembersMap(ctx context.Context, key string) (result *R
 	return
 }
 
-func (cache *RedisCache) SMove(ctx context.Context, source, destination string, member interface{}) (result *RedisResult) {
+func (cache *RedisCache) SMove(ctx context.Context, source, destination string, member interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.SMove(cache.Ctx, source, destination, member).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SMove",
@@ -525,7 +526,7 @@ func (cache *RedisCache) SMove(ctx context.Context, source, destination string, 
 	return
 }
 
-func (cache *RedisCache) SPop(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) SPop(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.SPop(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SPop",
@@ -536,7 +537,7 @@ func (cache *RedisCache) SPop(ctx context.Context, key string) (result *RedisRes
 	return
 }
 
-func (cache *RedisCache) SPopN(ctx context.Context, key string, count int64) (result *RedisResult) {
+func (cache *RedisCache) SPopN(ctx context.Context, key string, count int64) (result RedisResult) {
 	result.val, result.err = cache.client.SPopN(cache.Ctx, key, count).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SPopN",
@@ -548,7 +549,7 @@ func (cache *RedisCache) SPopN(ctx context.Context, key string, count int64) (re
 	return
 }
 
-func (cache *RedisCache) SRandMember(ctx context.Context, key string) (result *RedisResult) {
+func (cache *RedisCache) SRandMember(ctx context.Context, key string) (result RedisResult) {
 	result.val, result.err = cache.client.SRandMember(cache.Ctx, key).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SRandMember",
@@ -560,7 +561,7 @@ func (cache *RedisCache) SRandMember(ctx context.Context, key string) (result *R
 }
 
 // SRandMemberN Redis `SRANDMEMBER key count` command.
-func (cache *RedisCache) SRandMemberN(ctx context.Context, key string, count int64) (result *RedisResult) {
+func (cache *RedisCache) SRandMemberN(ctx context.Context, key string, count int64) (result RedisResult) {
 	result.val, result.err = cache.client.SRandMemberN(cache.Ctx, key, count).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SRandMemberN",
@@ -572,7 +573,7 @@ func (cache *RedisCache) SRandMemberN(ctx context.Context, key string, count int
 	return
 }
 
-func (cache *RedisCache) SRem(ctx context.Context, key string, members ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) SRem(ctx context.Context, key string, members ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.SRem(cache.Ctx, key, members...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SRem",
@@ -584,7 +585,7 @@ func (cache *RedisCache) SRem(ctx context.Context, key string, members ...interf
 	return
 }
 
-func (cache *RedisCache) SUnion(ctx context.Context, keys ...string) (result *RedisResult) {
+func (cache *RedisCache) SUnion(ctx context.Context, keys ...string) (result RedisResult) {
 	result.val, result.err = cache.client.SUnion(cache.Ctx, keys...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.SUnion",
@@ -595,7 +596,7 @@ func (cache *RedisCache) SUnion(ctx context.Context, keys ...string) (result *Re
 	return
 }
 
-func (cache *RedisCache) Do(args ...interface{}) (result *RedisResult) {
+func (cache *RedisCache) Do(args ...interface{}) (result RedisResult) {
 	result.val, result.err = cache.client.Do(cache.Ctx, args...).Result()
 	if result.err != nil {
 		commons.Logger().Error("RedisCache.Do",
