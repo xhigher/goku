@@ -18,7 +18,11 @@ mysql:
     log-mode: ""
     log-zap: false
 redis:
-  db: 0
-  addr: 127.0.0.1:6379
-  password: ""
-
+  - name: "default"
+    addr: 127.0.0.1:6379
+    password: ""
+    db: 0
+  - name: "user"
+    addr: 127.0.0.1:6379
+    password: ""
+    db: 0

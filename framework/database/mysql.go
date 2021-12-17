@@ -31,7 +31,7 @@ func Init(configs []*config.MysqlConfig) {
 			sqlDB.SetMaxOpenConns(config.MaxOpenConns)
 			mysqlDBs[config.DbName] = db
 		} else {
-			commons.Logger().Error("MySQL启动异常", zap.Any("err", err))
+			commons.Logger().Error("MySQL连接异常", zap.Any("err", err))
 			os.Exit(-1)
 			return
 		}
