@@ -45,6 +45,11 @@ func IsUrlEncode(contentType string) bool {
 }
 
 type BaseBodyData struct {
-	App string `json:"app"`
-	Ver int    `json:"ver"`
+	App     string `json:"gk_app"`
+	Ver     string `json:"gk_ver"`
+	Token   string `json:"gk_token"`
+	OS      string `json:"gk_os"`
+	Model   string `json:"gk_model"`
+	Channel string `json:"gk_chan"`
+	DevId   string `json:"gk_devid"`
 }

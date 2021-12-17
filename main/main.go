@@ -4,6 +4,7 @@ import (
 	"flag"
 	"io/ioutil"
 
+	"go.uber.org/zap"
 	"goku.net/framework/cache"
 	"goku.net/framework/commons"
 	"goku.net/framework/config"
@@ -43,7 +44,20 @@ func main() {
 
 	server := http.NewServer(8989)
 
+	server.AddInterceptor(SessionInterceptor{})
 	server.AddModule(user.NewExecutorFactory())
 
 	server.Start()
+}
+
+type SessionInterceptor struct {
+}
+
+func (interceptor SessionInterceptor) Intercept(executor http.Executor) bool {
+	commons.Logger().Info("SessionInterceptor.Intercept")
+	if executor.RequireSession() {
+		baseData := executor.GetBaseData()
+		commons.Logger().Info("SessionInterceptor.Intercept", zap.Any("baseData", baseData))
+	}
+	return false
 }

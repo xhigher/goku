@@ -16,7 +16,7 @@ const (
 )
 
 type ResponseData struct {
-	Code ErrorCode
-	Msg  string
-	Data interface{}
+	Code ErrorCode   `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
 }

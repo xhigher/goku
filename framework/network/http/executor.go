@@ -12,15 +12,17 @@ import (
 
 type Executor interface {
 	SupportMethods() []string
-	CheckQueryValues(values string) bool
+	CheckQueryValues(values map[string][]string) bool
 	CheckBodyData(data string) bool
+	GetBaseData() *BaseBodyData
 	RequireSession() bool
 	Execute() ResponseData
 }
 
 type BaseExecutor struct {
-	QueryValues map[string]string
+	QueryValues map[string][]string
 	BodyData    interface{}
+	BaseData    *BaseBodyData
 	Version     int
 }
 
@@ -28,12 +30,22 @@ func (executor *BaseExecutor) SupportMethods() []string {
 	return []string{"GET", "POST"}
 }
 
-func (executor *BaseExecutor) CheckQueryValues(values string) bool {
-
+func (executor *BaseExecutor) CheckQueryValues(values map[string][]string) bool {
+	if executor.QueryValues == nil {
+		executor.QueryValues = values
+	}
 	return true
 }
 
 func (executor *BaseExecutor) CheckBodyData(data string) bool {
+	if executor.BaseData != nil {
+		executor.BaseData = &BaseBodyData{}
+		err := utils.ParseStruct(data, executor.BaseData)
+		if err != nil {
+			commons.Logger().Error("CheckBodyData", zap.String("data", data), zap.Any("err", err))
+			return false
+		}
+	}
 	if executor.BodyData != nil {
 		err := utils.ParseStruct(data, executor.BodyData)
 		if err != nil {
@@ -42,6 +54,17 @@ func (executor *BaseExecutor) CheckBodyData(data string) bool {
 		}
 	}
 	return true
+}
+
+func (executor *BaseExecutor) QueryValue(key string) (value interface{}, ok bool) {
+	if executor.QueryValues == nil {
+		value, ok = executor.QueryValues[key]
+	}
+	return
+}
+
+func (executor *BaseExecutor) GetBaseData() *BaseBodyData {
+	return executor.BaseData
 }
 
 func (executor *BaseExecutor) RequireSession() bool {
@@ -112,7 +135,7 @@ func (logic *LogicExecutor) CheckMethod(method string) bool {
 }
 
 func (logic *LogicExecutor) CheckParams(request *http.Request) bool {
-	if !logic.executor.CheckQueryValues(request.URL.RawQuery) {
+	if !logic.executor.CheckQueryValues(request.URL.Query()) {
 		return false
 	}
 	contentType := request.Header.Get(ContentType)
@@ -130,15 +153,13 @@ func (logic *LogicExecutor) CheckParams(request *http.Request) bool {
 }
 
 func (logic *LogicExecutor) Execute(write http.ResponseWriter) {
-	if logic.executor.RequireSession() {
-
-	}
 
 	result := logic.executor.Execute()
 
 	resultString, err := utils.ToJSONString(result)
 	if err != nil {
-
+		write.WriteHeader(502)
+		return
 	}
 
 	write.Header().Set(ContentType, "application/json;charset=UTF-8")

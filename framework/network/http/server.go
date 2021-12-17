@@ -6,11 +6,15 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"go.uber.org/zap"
+	"goku.net/framework/commons"
 )
 
 type HttpServer struct {
 	port              int
 	executorFactories map[string]ModuleExecutorFactory
+	interceptors      []HttpInterceptor
 }
 
 var (
@@ -22,6 +26,10 @@ func NewServer(port int) HttpServer {
 		port:              port,
 		executorFactories: make(map[string]ModuleExecutorFactory),
 	}
+}
+
+func (server HttpServer) AddInterceptor(interceptor HttpInterceptor) {
+	server.interceptors = append(server.interceptors, interceptor)
 }
 
 func (server HttpServer) AddModule(executorFactory ModuleExecutorFactory) {
@@ -75,6 +83,14 @@ func (server HttpServer) handler(write http.ResponseWriter, request *http.Reques
 	}
 	if !logicExecutor.CheckParams(request) {
 		return
+	}
+
+	for _, interceptor := range server.interceptors {
+		commons.Logger().Info("interceptor", zap.Any("interceptor", interceptor))
+		if interceptor.Intercept(executor) {
+			write.WriteHeader(405)
+			return
+		}
 	}
 
 	logicExecutor.Execute(write)

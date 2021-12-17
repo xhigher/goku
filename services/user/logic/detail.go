@@ -19,6 +19,10 @@ func (executor *UserDetail) SupportMethods() []string {
 	return []string{"POST"}
 }
 
+func (executor *UserDetail) RequireSession() bool {
+	return true
+}
+
 func (executor *UserDetail) Execute() http.ResponseData {
 	switch executor.Version {
 	case 1:
