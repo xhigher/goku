@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"io/ioutil"
+	"time"
 
 	"go.uber.org/zap"
 	"goku.net/framework/cache"
@@ -42,7 +43,10 @@ func main() {
 
 	cache.Init(config.Redis)
 
-	server := http.NewServer(8989)
+	server := http.NewServer(8989, http.ServerInfo{
+		Name:      config.Name,
+		StartTime: time.Now().Unix(),
+	})
 
 	server.AddInterceptor(SessionInterceptor{})
 	server.AddModule(user.NewExecutorFactory())

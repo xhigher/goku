@@ -108,6 +108,13 @@ func (executor *BaseExecutor) ResultErrorFrequently() ResponseData {
 }
 
 func (executor *BaseExecutor) OutputResult(code ErrorCode, msg string, data interface{}) ResponseData {
+	if len(msg) == 0 {
+		if code == OK {
+			msg = "OK"
+		} else {
+			msg = "NOK"
+		}
+	}
 	return ResponseData{
 		Code: code,
 		Msg:  msg,
@@ -152,16 +159,9 @@ func (logic *LogicExecutor) CheckParams(request *http.Request) bool {
 	return true
 }
 
-func (logic *LogicExecutor) Execute(write http.ResponseWriter) {
+func (logic *LogicExecutor) Execute(writer http.ResponseWriter) {
 
-	result := logic.executor.Execute()
+	respData := logic.executor.Execute()
 
-	resultString, err := utils.ToJSONString(result)
-	if err != nil {
-		write.WriteHeader(502)
-		return
-	}
-
-	write.Header().Set(ContentType, "application/json;charset=UTF-8")
-	write.Write(utils.StringToBytes(resultString))
+	writeResponseData(writer, respData)
 }

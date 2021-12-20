@@ -6,24 +6,35 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"go.uber.org/zap"
 	"goku.net/framework/commons"
 )
 
+type ServerInfo struct {
+	Name      string `json:"name"`
+	Version   string `json:"version"`
+	BuildTime int64  `json:"build_time"`
+	StartTime int64  `json:"start_time"`
+}
+
 type HttpServer struct {
 	port              int
+	info              ServerInfo
 	executorFactories map[string]ModuleExecutorFactory
 	interceptors      []HttpInterceptor
 }
 
 var (
-	pathRegexp = regexp.MustCompile(`^/v([\d]+)/([\w]+)/([\w]+)$`)
+	basePathRegexp    = regexp.MustCompile(`^/(healthcheck|info)$`)
+	servicePathRegexp = regexp.MustCompile(`^/v([\d]+)/([\w]+)/([\w]+)$`)
 )
 
-func NewServer(port int) HttpServer {
+func NewServer(port int, info ServerInfo) HttpServer {
 	return HttpServer{
 		port:              port,
+		info:              info,
 		executorFactories: make(map[string]ModuleExecutorFactory),
 	}
 }
@@ -40,11 +51,10 @@ func (server HttpServer) Start() {
 	addr := fmt.Sprintf("0.0.0.0:%d", server.port)
 	http.HandleFunc("/", server.handler)
 	http.ListenAndServe(addr, nil)
-
 }
 
 // handler
-func (server HttpServer) handler(write http.ResponseWriter, request *http.Request) {
+func (server HttpServer) handler(writer http.ResponseWriter, request *http.Request) {
 
 	url := request.RequestURI
 	var lastIndex = strings.LastIndex(url, "?")
@@ -52,9 +62,15 @@ func (server HttpServer) handler(write http.ResponseWriter, request *http.Reques
 		url = url[:lastIndex]
 	}
 
-	params := pathRegexp.FindStringSubmatch(url)
+	params := basePathRegexp.FindStringSubmatch(url)
+	if len(params) == 2 {
+		server.handleDefaultRoute(params[1], writer)
+		return
+	}
+
+	params = servicePathRegexp.FindStringSubmatch(url)
 	if len(params) != 4 {
-		write.WriteHeader(404)
+		writer.WriteHeader(404)
 		return
 	}
 	//path := params[0]
@@ -64,13 +80,13 @@ func (server HttpServer) handler(write http.ResponseWriter, request *http.Reques
 
 	executorFactory, ok := server.executorFactories[module]
 	if !ok {
-		write.WriteHeader(404)
+		writer.WriteHeader(404)
 		return
 	}
 
 	executor := executorFactory.Create(version, action)
 	if executor == nil {
-		write.WriteHeader(404)
+		writer.WriteHeader(404)
 		return
 	}
 
@@ -78,7 +94,7 @@ func (server HttpServer) handler(write http.ResponseWriter, request *http.Reques
 		executor: executor,
 	}
 	if !logicExecutor.CheckMethod(request.Method) {
-		write.WriteHeader(405)
+		writer.WriteHeader(405)
 		return
 	}
 	if !logicExecutor.CheckParams(request) {
@@ -88,10 +104,24 @@ func (server HttpServer) handler(write http.ResponseWriter, request *http.Reques
 	for _, interceptor := range server.interceptors {
 		commons.Logger().Info("interceptor", zap.Any("interceptor", interceptor))
 		if interceptor.Intercept(executor) {
-			write.WriteHeader(405)
+			writer.WriteHeader(405)
 			return
 		}
 	}
 
-	logicExecutor.Execute(write)
+	logicExecutor.Execute(writer)
+}
+
+func (server HttpServer) handleDefaultRoute(path string, writer http.ResponseWriter) {
+	switch path {
+	case "healthcheck":
+		data := make(map[string]interface{})
+		data["time"] = time.Now().Unix()
+		writeResponseData(writer, ResponseData{Code: OK, Msg: "OK", Data: data})
+	case "info":
+		writeResponseData(writer, ResponseData{Code: OK, Msg: "OK", Data: server.info})
+	default:
+		writer.WriteHeader(404)
+		return
+	}
 }

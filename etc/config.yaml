@@ -1,3 +1,4 @@
+name: goku-server
 zap:
   level: info
   format: console
