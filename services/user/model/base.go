@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/hashicorp/consul/api"
 	"goku.net/framework/database"
 	"gorm.io/gorm"
 )
@@ -16,4 +17,8 @@ func MyDB() *gorm.DB {
 		},
 	}
 	return model.GormDB()
+}
+func f() {
+	_ = api.ACL{}
+
 }
